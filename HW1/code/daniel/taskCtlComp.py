@@ -33,8 +33,6 @@ def taskCtlComp(ctls=['JacDPseudo'], pauseTime=False, resting_pos=None):
 
 
 def taskSpace_plot(states, numContrlComp, ctls, time, robot: DoubleLink):
-    from matplotlib.lines import Line2D
-
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
@@ -43,10 +41,6 @@ def taskSpace_plot(states, numContrlComp, ctls, time, robot: DoubleLink):
     for i in range(states.shape[0]):
         x1[i,:], x2[i,:] = robot.getJointsInTaskSpace(q=states[i,:])
 
-    # lineX1 = Line2D(x1[:,0], x1[:,1])
-    # lineX2 = Line2D(x2[:,0], x2[:,1])
-    # ax.add_line(lineX1, label="X1")
-    # ax.add_line(lineX2, label="X2")
     ax.plot(x1[:,0], x1[:,1], label="X1")
     ax.plot(x2[:,0], x2[:,1], label="X2")
 
@@ -84,5 +78,5 @@ def traj_plot(states, colors, numContrlComp, ctls, time, plotVel):
 
         plt.xlim(0,3)
         plt.grid()
-        plt.savefig(fname="daniel/SavedPlots/" + "TaskCtl_" + "Velocity"*plotVel + "Position"*(1-plotVel) + "_Joint_"
+        plt.savefig(fname="SavedPlots/" + "TaskCtl_" + "Velocity"*plotVel + "Position"*(1-plotVel) + "_Joint_"
                           + str(statei) + ".pdf", format='pdf')

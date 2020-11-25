@@ -38,7 +38,7 @@ def my_taskSpace_ctl(ctl, dt, q, qd, gravity, coriolis, M, J, cart, desCart, res
         J_pseudeInverse = J.T * np.linalg.pinv(J * J.T + dFact * np.eye(2))
         q0 = KP * (resting_pos - q)
         qd_des = J_pseudeInverse * (desCart - cart) + (np.eye(2) - np.matmul(J_pseudeInverse, J)) * q0
-        error = q + qd_des * dt - q  # Bisschen Bullshit hier q zu addieren, nur um es dann wieder abzuziehen?
+        error = q + qd_des * dt - q  # Bisschen überflüssig hier q zu addieren, nur um es dann wieder abzuziehen?
         errord = qd_des - qd
         u = M * np.vstack(np.hstack([KP,KD])) * np.vstack([error,errord]) + coriolis + gravity
 
