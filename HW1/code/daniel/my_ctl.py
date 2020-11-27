@@ -9,9 +9,11 @@
 
 import numpy as np
 
-kp = np.array((60, 30))  # * 10
-kd = np.array((10, 6))  # * 10
-ki = np.array((0.1, 0.1))  # * 10
+gainMultiplier = 1
+
+kp = np.array((60, 30)) * gainMultiplier
+kd = np.array((10, 6)) * gainMultiplier
+ki = np.array((0.1, 0.1)) * gainMultiplier
 
 
 def my_ctl(ctl, q, qd, q_des, qd_des, qdd_des, q_hist, q_deshist, gravity, coriolis, M):
@@ -25,9 +27,9 @@ def my_ctl(ctl, q, qd, q_des, qd_des, qdd_des, q_hist, q_deshist, gravity, corio
         else:
             u = kp * (q_des - q) + kd * (qd_des - qd) + ki * np.sum(q_deshist - q_hist, axis=0)
     elif ctl == 'PD_Grav':
-        u = np.zeros((2, 1))  # Implement your controller here
+        u = kp * (q_des - q) + kd * (qd_des - qd) + gravity
     elif ctl == 'ModelBased':
-        u = np.zeros((2, 1))  # Implement your controller here
+        u = M @ (qdd_des + kp * (q_des - q) + kd * (qd_des - qd)) + coriolis + gravity
     else:
         raise Warning(f"wrong definition for ctl: {ctl}")
     u = np.mat(u).T

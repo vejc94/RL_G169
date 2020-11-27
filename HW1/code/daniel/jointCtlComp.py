@@ -41,19 +41,19 @@ def jointCtlComp(ctls=['P'], isSetPoint=False, pauseTime=False):
                                   -(2 * pi * f2) ** 2 * np.sin(2 * pi * f2 * time)]).T
 
     states = simSys(robot, dt, nSteps, ctls, target, pauseTime)
-    colors = [1, 2, 3]
-    traj_plot(states, colors, numContrlComp, ctls, target['q'], target['qd'], time, 0)
-    traj_plot(states, colors, numContrlComp, ctls, target['q'], target['qd'], time, 1)
+    traj_plot(states, numContrlComp, ctls, target['q'], target['qd'], time, 0)
+    traj_plot(states, numContrlComp, ctls, target['q'], target['qd'], time, 1)
     plt.pause(0.001)
 
 
 # Just a way to plot, feel free to modify!
-def traj_plot(states, colors, numContrlComp, ctls, q_desired, qd_desired, time, plotVel):
-
+def traj_plot(states, numContrlComp, ctls, q_desired, qd_desired, time, plotVel):
     stateNo = (1, 2)
+    linestyle = ('-.', 'dotted', 'dashed', (0, (5, 1)), (0, (3, 1, 1, 1)))
+    colors = ('red', 'purple', 'brown', 'blue', 'orange')
 
     tracked = True
-    if q_desired[0,0] == q_desired[1,0]:
+    if q_desired[0, 0] == q_desired[1, 0]:
         tracked = False
 
     for statei in stateNo:
@@ -65,23 +65,27 @@ def traj_plot(states, colors, numContrlComp, ctls, q_desired, qd_desired, time, 
 
         plt.figure()
 
-        plt.plot(time, y[:,statei-1], linewidth=2, linestyle='-.')
-        names = ['Desired_' + str(statei)]
+        names = list()
+        plt.plot(time, y[:, statei - 1], linewidth=2, linestyle='solid', c='black', alpha=1)
+        names += ['Desired_' + str(statei)]
 
         for k in range(numContrlComp):
             names += [ctls[k] + '_' + str(statei)]
-            plt.plot(time, states[k*len(time):(k+1)*len(time), plotVel+2*(statei-1)::4], linewidth=2)
+            plt.plot(time, states[k * len(time):(k + 1) * len(time), plotVel + 2 * (statei - 1)::4], linewidth=2,
+                    alpha=.7, linestyle=linestyle[k], c=colors[k])
 
         plt.legend(tuple(names))
         plt.xlabel('time in s', fontsize=15)
-        plt.ylabel('angle in rad', fontsize=15)
 
         if plotVel:
+            plt.ylabel('angular velocity in rad/s', fontsize=15)
             plt.title('Velocity for Joint ' + str(statei), fontsize=20)
         else:
+            plt.ylabel('angle in rad', fontsize=15)
             plt.title('Position for Joint ' + str(statei), fontsize=20)
 
-        plt.xlim(0,3)
+        plt.xlim(0, 3)
         plt.grid()
-        plt.savefig(fname="daniel/SavedPlots/" + "Velocity"*plotVel + "Position"*(1-plotVel) + "_Joint_" + str(statei)
-                          + "_tracked"*tracked + ".pdf", format='pdf')
+
+        plt.savefig(fname="SavedPlots/" + "Velocity" * plotVel + "Position" * (1 - plotVel) + "_Joint_" + str(statei)
+                          + "_tracked" * tracked + ".pdf", format='pdf')  #+ "_HighGains"

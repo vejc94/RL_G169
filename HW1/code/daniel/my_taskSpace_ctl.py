@@ -18,6 +18,8 @@ def my_taskSpace_ctl(ctl, dt, q, qd, gravity, coriolis, M, J, cart, desCart, res
     gamma = 0.6
     dFact = 1e-6
 
+    u = 0
+
     if ctl == 'JacTrans':
         qd_des = gamma * J.T * (desCart - cart)
         error = q + qd_des * dt - q
@@ -35,9 +37,9 @@ def my_taskSpace_ctl(ctl, dt, q, qd, gravity, coriolis, M, J, cart, desCart, res
         u = M * np.vstack(np.hstack([KP,KD])) * np.vstack([error,errord]) + coriolis + gravity
     elif ctl == 'JacNullSpace':
         assert resting_pos is not None
-        J_pseudeInverse = J.T * np.linalg.pinv(J * J.T + dFact * np.eye(2))
+        J_pseudoInverse = J.T * np.linalg.pinv(J * J.T + dFact * np.eye(2))
         q0 = KP * (resting_pos - q)
-        qd_des = J_pseudeInverse * (desCart - cart) + (np.eye(2) - np.matmul(J_pseudeInverse, J)) * q0
+        qd_des = J_pseudoInverse * (desCart - cart) + (np.eye(2) - np.matmul(J_pseudoInverse, J)) * q0
         error = q + qd_des * dt - q  # Bisschen überflüssig hier q zu addieren, nur um es dann wieder abzuziehen?
         errord = qd_des - qd
         u = M * np.vstack(np.hstack([KP,KD])) * np.vstack([error,errord]) + coriolis + gravity

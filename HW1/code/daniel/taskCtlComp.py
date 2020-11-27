@@ -26,57 +26,32 @@ def taskCtlComp(ctls=['JacDPseudo'], pauseTime=False, resting_pos=None):
     target['cartCtl'] = True
     states = simSys(robot, dt, nSteps, ctls, target, pauseTime, resting_pos)
 
-    colors = [1, 2, 3]
-    taskSpace_plot(states, numContrlComp, ctls, time, robot)
-    traj_plot(states, colors, numContrlComp, ctls, time, plotVel=0)
-    # traj_plot(states, colors, numContrlComp, ctls, time, plotVel=1)
+    taskSpace_plot(states, robot)
 
 
-def taskSpace_plot(states, numContrlComp, ctls, time, robot: DoubleLink):
+def taskSpace_plot(states, robot: DoubleLink):
     fig = plt.figure()
-    ax = fig.add_subplot(111)
+    ax1 = fig.add_subplot(121, autoscale_on=False, xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
+    ax1.plot(2 * np.array([-1.1, 1.1]), np.array([0, 0]), 'b--')
+    line1, = ax1.plot([], [], 'o-', lw=2, color='k', markerfacecolor='w', markersize=12)
+    ax1.set_xlabel('x-axis in m', fontsize=15)
+    ax1.set_ylabel('y-axis in m', fontsize=15)
+    ax1.set_title('Initial Position')
+    robot.visualize(states[0, :], line1)
+    ax1.scatter([-.35], [1.5], marker='x', c='red',zorder=10, label='Setpoint')
+    plt.gca().set_aspect('equal', adjustable='box')
 
-    x1 = np.empty((states.shape[0], 2))
-    x2 = np.empty((states.shape[0], 2))
-    for i in range(states.shape[0]):
-        x1[i,:], x2[i,:] = robot.getJointsInTaskSpace(q=states[i,:])
+    ax2 = fig.add_subplot(122, autoscale_on=False, xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
+    ax2.plot(2 * np.array([-1.1, 1.1]), np.array([0, 0]), 'b--')
+    line2, = ax2.plot([], [], 'o-', lw=2, color='k', markerfacecolor='w', markersize=12)
+    ax2.set_xlabel('x-axis in m', fontsize=15)
+    ax2.set_ylabel('y-axis in m', fontsize=15)
+    ax2.set_title('Final Position after 3s')
+    robot.visualize(states[-1, :], line2)
+    ax2.scatter([-.35], [1.5], marker='x', c='red',zorder=10, label='Setpoint')
+    ax2.legend()
+    plt.gca().set_aspect('equal', adjustable='box')
 
-    ax.plot(x1[:,0], x1[:,1], label="X1")
-    ax.plot(x2[:,0], x2[:,1], label="X2")
-
-    #plt.legend(tuple(names))
-    plt.xlabel('x', fontsize=15)
-    plt.ylabel('y', fontsize=15)
-
-    plt.grid()
+    plt.tight_layout()
     plt.show()
-    # plt.savefig(fname="daniel/SavedPlots/" + "TaskCtl_" + "Velocity"*plotVel + "Position"*(1-plotVel) + "_Joint_"
-    #                   + str(statei) + ".pdf", format='pdf')
-
-
-def traj_plot(states, colors, numContrlComp, ctls, time, plotVel):
-
-    stateNo = (1, 2)
-
-    for statei in stateNo:
-        plt.figure()
-
-        names = []
-
-        for k in range(numContrlComp):
-            names += [ctls[k] + '_' + str(statei)]
-            plt.plot(time, states[k*len(time):(k+1)*len(time), plotVel+2*(statei-1)::4], linewidth=2)
-
-        plt.legend(tuple(names))
-        plt.xlabel('time in s', fontsize=15)
-        plt.ylabel('angle in rad', fontsize=15)
-
-        if plotVel:
-            plt.title('Velocity for Joint ' + str(statei), fontsize=20)
-        else:
-            plt.title('Position for Joint ' + str(statei), fontsize=20)
-
-        plt.xlim(0,3)
-        plt.grid()
-        plt.savefig(fname="SavedPlots/" + "TaskCtl_" + "Velocity"*plotVel + "Position"*(1-plotVel) + "_Joint_"
-                          + str(statei) + ".pdf", format='pdf')
+    fig.savefig(fname="SavedPlots/" + "TaskCtl2_" + ".pdf", format='pdf')
