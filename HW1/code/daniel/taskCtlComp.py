@@ -30,7 +30,7 @@ def taskCtlComp(ctls=['JacDPseudo'], pauseTime=False, resting_pos=None):
 
 
 def taskSpace_plot(states, robot: DoubleLink):
-    fig = plt.figure()
+    fig = plt.figure(figsize=(6.4, 4))
     ax1 = fig.add_subplot(121, autoscale_on=False, xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
     ax1.plot(2 * np.array([-1.1, 1.1]), np.array([0, 0]), 'b--')
     line1, = ax1.plot([], [], 'o-', lw=2, color='k', markerfacecolor='w', markersize=12)
@@ -39,6 +39,7 @@ def taskSpace_plot(states, robot: DoubleLink):
     ax1.set_title('Initial Position')
     robot.visualize(states[0, :], line1)
     ax1.scatter([-.35], [1.5], marker='x', c='red',zorder=10, label='Setpoint')
+    fig.suptitle('Null-Space Movement with Resting Position (0, pi)')
     plt.gca().set_aspect('equal', adjustable='box')
 
     ax2 = fig.add_subplot(122, autoscale_on=False, xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
@@ -54,4 +55,4 @@ def taskSpace_plot(states, robot: DoubleLink):
 
     plt.tight_layout()
     plt.show()
-    fig.savefig(fname="SavedPlots/" + "TaskCtl2_" + ".pdf", format='pdf')
+    fig.savefig(fname="SavedPlots/" + "TaskCtl1_" + ".pdf", format='pdf')

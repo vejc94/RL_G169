@@ -10,6 +10,6 @@ states_dict = dict()
 # jointCtlComp(['P', 'PD', 'PID', 'PD_Grav', 'ModelBased'], False)
 
 # Controller in the task space.
-taskCtlComp(['JacNullSpace'],resting_pos=np.mat([0, -np.pi]).T)
+taskCtlComp(['JacNullSpace'],resting_pos=np.mat([0, np.pi]).T)
 
 input('Press Enter to close')
