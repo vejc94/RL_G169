@@ -49,8 +49,8 @@ def jointCtlComp(ctls=['P'], isSetPoint=False, pauseTime=False):
 # Just a way to plot, feel free to modify!
 def traj_plot(states, numContrlComp, ctls, q_desired, qd_desired, time, plotVel):
     stateNo = (1, 2)
-    linestyle = ('-.', 'dotted', 'dashed', (0, (5, 1)), (0, (3, 1, 1, 1)))
-    colors = ('red', 'purple', 'brown', 'blue', 'orange')
+    linestyle = ((0, (5, 1)), (0, (3, 1, 1, 1)), 'dashed', '-.',  'dotted',)
+    colors = ('red', 'lightblue', 'green', 'blue', 'orange')
 
     tracked = True
     if q_desired[0, 0] == q_desired[1, 0]:
@@ -71,8 +71,12 @@ def traj_plot(states, numContrlComp, ctls, q_desired, qd_desired, time, plotVel)
 
         for k in range(numContrlComp):
             names += [ctls[k] + '_' + str(statei)]
-            plt.plot(time, states[k * len(time):(k + 1) * len(time), plotVel + 2 * (statei - 1)::4], linewidth=2,
-                    alpha=.7, linestyle=linestyle[k], c=colors[k])
+            if k == 10:
+                plt.plot(time, states[k * len(time):(k + 1) * len(time), plotVel + 2 * (statei - 1)::4], linewidth=2,
+                         alpha=.3, linestyle=linestyle[k], c=colors[k])
+            else:
+                plt.plot(time, states[k * len(time):(k + 1) * len(time), plotVel + 2 * (statei - 1)::4], linewidth=2,
+                        alpha=.8, linestyle=linestyle[k], c=colors[k])
 
         plt.legend(tuple(names))
         plt.xlabel('time in s', fontsize=15)
@@ -85,7 +89,18 @@ def traj_plot(states, numContrlComp, ctls, q_desired, qd_desired, time, plotVel)
             plt.title('Position for Joint ' + str(statei), fontsize=20)
 
         plt.xlim(0, 3)
+        if False:
+            if statei == 2:
+                if plotVel:
+                    plt.ylim(-10, 10)
+                else:
+                    plt.ylim(-2, 2)
+            else:
+                if plotVel:
+                    plt.ylim(-15, 15)
+                else:
+                    plt.ylim(-5, 0)
         plt.grid()
 
         plt.savefig(fname="SavedPlots/" + "Velocity" * plotVel + "Position" * (1 - plotVel) + "_Joint_" + str(statei)
-                          + "_tracked" * tracked + ".pdf", format='pdf')  #+ "_HighGains"
+                          + "_tracked" * tracked + ".pdf", format='pdf')  # + "_HighGains"
