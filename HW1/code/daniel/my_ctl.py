@@ -9,7 +9,7 @@
 
 import numpy as np
 
-gainMultiplier = 1
+gainMultiplier = 10
 
 kp = np.array((60, 30)) * gainMultiplier
 kd = np.array((10, 6)) * gainMultiplier

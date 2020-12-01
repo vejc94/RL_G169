@@ -26,12 +26,12 @@ def taskCtlComp(ctls=['JacDPseudo'], pauseTime=False, resting_pos=None):
     target['cartCtl'] = True
     states = simSys(robot, dt, nSteps, ctls, target, pauseTime, resting_pos)
 
-    taskSpace_plot(states, robot)
+    taskSpace_plot(states, robot, ctls)
 
 
-def taskSpace_plot(states, robot: DoubleLink):
-    fig = plt.figure(figsize=(6.4, 4))
-    ax1 = fig.add_subplot(121, autoscale_on=False, xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
+def taskSpace_plot(states, robot: DoubleLink, ctls):
+    fig = plt.figure()  # figsize=(6.4, 4)
+    ax1 = fig.add_subplot(111, autoscale_on=False, xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
     ax1.plot(2 * np.array([-1.1, 1.1]), np.array([0, 0]), 'b--')
     line1, = ax1.plot([], [], 'o-', lw=2, color='k', markerfacecolor='w', markersize=12)
     ax1.set_xlabel('x-axis in m', fontsize=15)
@@ -39,10 +39,16 @@ def taskSpace_plot(states, robot: DoubleLink):
     ax1.set_title('Initial Position')
     robot.visualize(states[0, :], line1)
     ax1.scatter([-.35], [1.5], marker='x', c='red',zorder=10, label='Setpoint')
-    fig.suptitle('Null-Space Movement with Resting Position (0, pi)')
-    plt.gca().set_aspect('equal', adjustable='box')
+    ax1.legend()
+    plt.title('Initial Position for Task Space Control')
 
-    ax2 = fig.add_subplot(122, autoscale_on=False, xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
+    plt.gca().set_aspect('equal', adjustable='box')
+    plt.tight_layout()
+    plt.show()
+    fig.savefig(fname="SavedPlots/" + "TaskCtlInitial_" + ".pdf", format='pdf')
+
+    fig = plt.figure()
+    ax2 = fig.add_subplot(111, autoscale_on=False, xlim=(-2.5, 2.5), ylim=(-2.5, 2.5))
     ax2.plot(2 * np.array([-1.1, 1.1]), np.array([0, 0]), 'b--')
     line2, = ax2.plot([], [], 'o-', lw=2, color='k', markerfacecolor='w', markersize=12)
     ax2.set_xlabel('x-axis in m', fontsize=15)
@@ -51,8 +57,10 @@ def taskSpace_plot(states, robot: DoubleLink):
     robot.visualize(states[-1, :], line2)
     ax2.scatter([-.35], [1.5], marker='x', c='red',zorder=10, label='Setpoint')
     ax2.legend()
+    plt.title(f'Final Position for {str(ctls[0])} Control')
+
     plt.gca().set_aspect('equal', adjustable='box')
 
     plt.tight_layout()
     plt.show()
-    fig.savefig(fname="SavedPlots/" + "TaskCtl1_" + ".pdf", format='pdf')
+    fig.savefig(fname="SavedPlots/" + "TaskCtl_" + str(ctls[0]) + ".pdf", format='pdf')

@@ -18,8 +18,6 @@ def my_taskSpace_ctl(ctl, dt, q, qd, gravity, coriolis, M, J, cart, desCart, res
     gamma = 0.6
     dFact = 1e-6
 
-    u = 0
-
     if ctl == 'JacTrans':
         qd_des = gamma * J.T * (desCart - cart)
         error = q + qd_des * dt - q
@@ -43,5 +41,7 @@ def my_taskSpace_ctl(ctl, dt, q, qd, gravity, coriolis, M, J, cart, desCart, res
         error = q + qd_des * dt - q  # Bisschen überflüssig hier q zu addieren, nur um es dann wieder abzuziehen?
         errord = qd_des - qd
         u = M * np.vstack(np.hstack([KP,KD])) * np.vstack([error,errord]) + coriolis + gravity
+    else:
+        raise Warning(f"wrong definition for ctl: {ctl}")
 
     return u
