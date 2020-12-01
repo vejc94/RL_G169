@@ -9,15 +9,28 @@
 
 import numpy as np
 
+gainMultiplier = 1
+
+kp = np.array((60, 30)) * gainMultiplier
+kd = np.array((10, 6)) * gainMultiplier
+ki = np.array((0.1, 0.1)) * gainMultiplier
+
+
 def my_ctl(ctl, q, qd, q_des, qd_des, qdd_des, q_hist, q_deshist, gravity, coriolis, M):
     if ctl == 'P':
-        u = np.zeros((2, 1))  # Implement your controller here
+        u = kp * (q_des - q)
     elif ctl == 'PD':
-        u = np.zeros((2, 1))  # Implement your controller here
+        u = kp * (q_des - q) + kd * (qd_des - qd)
     elif ctl == 'PID':
-        u = np.zeros((2, 1))  # Implement your controller here
+        if q_hist.shape[0] == 0:
+            u = kp * (q_des - q) + kd * (qd_des - qd)
+        else:
+            u = kp * (q_des - q) + kd * (qd_des - qd) + ki * np.sum(q_deshist - q_hist, axis=0)
     elif ctl == 'PD_Grav':
-        u = np.zeros((2, 1))  # Implement your controller here
+        u = kp * (q_des - q) + kd * (qd_des - qd) + gravity
     elif ctl == 'ModelBased':
-        u = np.zeros((2, 1))  # Implement your controller here
+        u = M @ (qdd_des + kp * (q_des - q) + kd * (qd_des - qd)) + coriolis + gravity
+    else:
+        raise Warning(f"wrong definition for ctl: {ctl}")
+    u = np.mat(u).T
     return u

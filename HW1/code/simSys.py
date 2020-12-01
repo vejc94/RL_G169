@@ -1,9 +1,6 @@
-import numpy as np
-from math import pi
 from my_ctl import *
 from my_taskSpace_ctl import *
 from matplotlib import pyplot as plt
-import time
 
 
 def simSys(robot, dt, nSteps, ctls, target, pauseTime=False, resting_pos=None):
@@ -27,8 +24,10 @@ def simSys(robot, dt, nSteps, ctls, target, pauseTime=False, resting_pos=None):
             c_idx = i + k * nSteps
             gravity, coriolis, M = robot.getDynamicsMatrices(states[c_idx, :])
             if not target['cartCtl']:
+                # Added k*nsteps as starting index for q_hist. Otherwise the history of the controller before is also
+                # passed
                 u = my_ctl(ctls[k], states[c_idx, ::2], states[c_idx, 1::2], target['q'][i, :], target['qd'][i, :],
-                           target['qdd'][i, :], states[:c_idx, ::2], target['q'][:i, :], gravity, coriolis, M)
+                           target['qdd'][i, :], states[k * nSteps:c_idx, ::2], target['q'][:i, :], gravity, coriolis, M)
             else:
                 J, cart = robot.getJacobian(states[c_idx, ::2], 2)
                 u = my_taskSpace_ctl(ctls[k], dt, np.mat(states[c_idx, ::2]).T,
@@ -50,4 +49,4 @@ def simSys(robot, dt, nSteps, ctls, target, pauseTime=False, resting_pos=None):
             robot.visualize(states[-1,:], line)
             plt.pause(0.00001)
 
-    return states
+    return states  # Would be nice to also return u so that the control input can be plotted as well

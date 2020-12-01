@@ -11,6 +11,7 @@
 import numpy as np
 from math import pi
 
+
 def my_taskSpace_ctl(ctl, dt, q, qd, gravity, coriolis, M, J, cart, desCart, resting_pos=None):
     KP = np.diag([60, 30])
     KD = np.diag([10, 6])
@@ -33,6 +34,14 @@ def my_taskSpace_ctl(ctl, dt, q, qd, gravity, coriolis, M, J, cart, desCart, res
         errord = qd_des - qd
         u = M * np.vstack(np.hstack([KP,KD])) * np.vstack([error,errord]) + coriolis + gravity
     elif ctl == 'JacNullSpace':
-        u = np.zeros((2, 1)) # Implement your controller here
+        assert resting_pos is not None
+        J_pseudoInverse = J.T * np.linalg.pinv(J * J.T + dFact * np.eye(2))
+        q0 = KP * (resting_pos - q)
+        qd_des = J_pseudoInverse * (desCart - cart) + (np.eye(2) - np.matmul(J_pseudoInverse, J)) * q0
+        error = q + qd_des * dt - q
+        errord = qd_des - qd
+        u = M * np.vstack(np.hstack([KP,KD])) * np.vstack([error,errord]) + coriolis + gravity
+    else:
+        raise Warning(f"wrong definition for ctl: {ctl}")
 
     return u

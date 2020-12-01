@@ -41,36 +41,68 @@ def jointCtlComp(ctls=['P'], isSetPoint=False, pauseTime=False):
                                   -(2 * pi * f2) ** 2 * np.sin(2 * pi * f2 * time)]).T
 
     states = simSys(robot, dt, nSteps, ctls, target, pauseTime)
-    colors = [1, 2, 3]
-    traj_plot(states, colors, numContrlComp, ctls, target['q'], target['qd'], time, 0)
-    traj_plot(states, colors, numContrlComp, ctls, target['q'], target['qd'], time, 1)
+    traj_plot(states, numContrlComp, ctls, target['q'], target['qd'], time, 0)
+    traj_plot(states, numContrlComp, ctls, target['q'], target['qd'], time, 1)
     plt.pause(0.001)
 
+
 # Just a way to plot, feel free to modify!
-def traj_plot(states, colors, numContrlComp, ctls, q_desired, qd_desired, time, plotVel):
-    if plotVel:
-        y = qd_desired
-    else:
-        y = q_desired
+def traj_plot(states, numContrlComp, ctls, q_desired, qd_desired, time, plotVel):
+    stateNo = (1, 2)
+    linestyle = ((0, (5, 1)), (0, (3, 1, 1, 1)), 'dashed', '-.',  'dotted',)
+    colors = ('red', 'lightblue', 'green', 'blue', 'orange')
 
-    plt.figure()
-#    plt.hold(True)
+    tracked = True
+    if q_desired[0, 0] == q_desired[1, 0]:
+        tracked = False
 
-    h = plt.plot(time, y, linewidth=2)
-    plt.draw()
-    plt.setp(h[0], 'linestyle', '-.')
-    plt.setp(h[1], 'linestyle', '-.')
-    names = ['Desired_1', 'Desired_2']
+    for statei in stateNo:
 
-    for k in range(numContrlComp):
-        names += [ctls[k] + '_1', ctls[k] + '_2']
-        plt.plot(time, states[:, plotVel::2], linewidth=2)
+        if plotVel:
+            y = qd_desired
+        else:
+            y = q_desired
 
-    plt.legend(tuple(names))
-    plt.xlabel('time(s)', fontsize=15)
-    plt.ylabel('angle (rad)', fontsize=15)
+        plt.figure()
 
-    if plotVel:
-        plt.title('Velocity', fontsize=20)
-    else:
-        plt.title('Position', fontsize=20)
+        names = list()
+        plt.plot(time, y[:, statei - 1], linewidth=2, linestyle='solid', c='black', alpha=1)
+        names += ['Desired_' + str(statei)]
+
+        for k in range(numContrlComp):
+            names += [ctls[k] + '_' + str(statei)]
+            if k == 0:
+                plt.plot(time, states[k * len(time):(k + 1) * len(time), plotVel + 2 * (statei - 1)::4], linewidth=2,
+                         alpha=.3, linestyle=linestyle[k], c=colors[k])
+            else:
+                plt.plot(time, states[k * len(time):(k + 1) * len(time), plotVel + 2 * (statei - 1)::4], linewidth=2,
+                        alpha=.8, linestyle=linestyle[k], c=colors[k])
+
+        plt.legend(tuple(names))
+        plt.xlabel('time in s', fontsize=15)
+
+        if plotVel:
+            plt.ylabel('angular velocity in rad/s', fontsize=15)
+            plt.title('Velocity for Joint ' + str(statei), fontsize=20)
+        else:
+            plt.ylabel('angle in rad', fontsize=15)
+            plt.title('Position for Joint ' + str(statei), fontsize=20)
+
+        plt.xlim(0, 3)
+        if False:  # Set to True when using high gains
+            if statei == 2:
+                if plotVel:
+                    plt.ylim(-10, 10)
+                else:
+                    plt.ylim(-2, 2)
+            else:
+                if plotVel:
+                    plt.ylim(-15, 15)
+                else:
+                    plt.ylim(-5, 0)
+        plt.grid()
+        plt.show()
+
+        # Uncomment to save
+        #plt.savefig(fname="SavedPlots/" + "Velocity" * plotVel + "Position" * (1 - plotVel) + "_Joint_" + str(statei)
+        #                  + "_tracked" * tracked + ".pdf", format='pdf')  # + "_HighGains"
