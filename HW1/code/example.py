@@ -6,8 +6,6 @@
 from jointCtlComp import *
 from taskCtlComp import *
 
-states_dict = dict()
-
 # Controller in the joint space. The robot has to reach a fixed position.
 jointCtlComp(['P', 'PD', 'PID', 'PD_Grav', 'ModelBased'], True)
 
