@@ -1,3 +1,8 @@
+# Robot Learning - Group 169
+# Victor Jimenez 2491031
+# Daniel Piendl 2586991
+# Dominik Marino 2468378
+#
 # CTL is the name of the controller.
 # Q_HISTORY is a matrix containing all the past position of the robot. Each row of this matrix is [q_1, ... q_i], where
 # i is the number of the joints.

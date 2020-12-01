@@ -1,3 +1,8 @@
+# Robot Learning - Group 169
+# Victor Jimenez 2491031
+# Daniel Piendl 2586991
+# Dominik Marino 2468378
+
 from my_ctl import *
 from my_taskSpace_ctl import *
 from matplotlib import pyplot as plt

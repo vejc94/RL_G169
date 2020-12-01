@@ -1,3 +1,8 @@
+# Robot Learning - Group 169
+# Victor Jimenez 2491031
+# Daniel Piendl 2586991
+# Dominik Marino 2468378
+#
 # This is one of the two main classes you need to run.
 #
 # CTLS is a list of cells with your controller name

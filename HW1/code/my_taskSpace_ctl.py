@@ -1,3 +1,8 @@
+# Robot Learning - Group 169
+# Victor Jimenez 2491031
+# Daniel Piendl 2586991
+# Dominik Marino 2468378
+#
 # CTL is the name of the controller.
 # DT is the time step.
 # Q and QD are respectively the position and the velocity of the joints.
