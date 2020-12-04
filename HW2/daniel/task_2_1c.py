@@ -3,7 +3,7 @@ from daniel.task_2_helper import *
 
 def get_a_t(s_t, s_t_des, V_tplus1, v_tplus1, t) -> np.ndarray:
     assert 0 <= t <= T-1
-    return -np.linalg.inv(H_t + B_t.T.dot(V_tplus1.dot(B_t))).dot(B_t.T.dot(V_tplus1.dot(A_t.dot(s_t)) - v_tplus1))
+    return -np.linalg.inv(H_t + B_t.T.dot(V_tplus1.dot(B_t))).dot(B_t.T.dot(V_tplus1.dot(A_t.dot(s_t) + b_t[:,0]) - v_tplus1))
     # return get_K_t(V_t_array[t+1], t).dot(s_t_des - s_t) + get_k_t(V_t_array[t+1], v_t_array[t+1], t)
 
 

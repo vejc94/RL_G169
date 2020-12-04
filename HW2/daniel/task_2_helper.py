@@ -45,8 +45,6 @@ def get_reward(states: np.ndarray, actions: np.ndarray) -> float:
 
         reward += -(states[i, :] - r_t.T) @ R_t @ (states[i, :] - r_t.T).T - actions[i].T * H_t * actions[i]
 
-    R_t = get_R_t(states.shape[0] - 1)
-    r_t = get_r_t(states.shape[0] - 1)
     reward += -(states[-1, :] - r_t1.T) @ R_t0 @ (states[-1, :] - r_t1.T).T
     return reward
 
