@@ -5,12 +5,10 @@ def get_a_t(s_t, s_t_des) -> np.ndarray:
     return K_t @ (s_t_des - s_t) + k_t
 
 
-def execute_LQR(useTarget) -> (np.ndarray, np.ndarray):
-    s_0 = np.random.normal((0, 0), (1, 1), 2)
-    if useTarget:
-        s_t_des = r_t0[:,0].T
-    else:
-        s_t_des = np.zeros(2)
+def execute_LQR() -> (np.ndarray, np.ndarray):
+    s_0 = np.random.normal((0, 0), np.sqrt((1, 1)))
+
+    s_t_des = r_t0
 
     s_t_array = np.zeros((T + 1, 2))
     s_t_array[0, :] = s_0
@@ -19,7 +17,7 @@ def execute_LQR(useTarget) -> (np.ndarray, np.ndarray):
     a_t_array[0] = get_a_t(s_t_array[0, :], s_t_des)
 
     for i in np.arange(1, T + 1, 1):
-        if useTarget: s_t_des = get_r_t(i)[:,0]
+        s_t_des = get_r_t(i)
         s_t_array[i, :] = get_s_tplus1(s_t_array[i - 1, :], a_t_array[i - 1])
         a_t_array[i] = get_a_t(s_t_array[i, :], s_t_des)
 
@@ -31,7 +29,7 @@ def task_2_1b():
     a_t_history = list()
     rew_history = list()
     for i in range(n):
-        s_t_temp, a_t_temp = execute_LQR(useTarget=True)
+        s_t_temp, a_t_temp = execute_LQR()
         s_t_history.append(s_t_temp)
         a_t_history.append(a_t_temp)
         rew_history.append(get_reward(s_t_temp, a_t_temp))

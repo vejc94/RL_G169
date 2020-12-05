@@ -6,7 +6,7 @@ def get_a_t(s_t) -> np.ndarray:
 
 
 def execute_LQR() -> (np.ndarray, np.ndarray):
-    s_0 = np.random.normal((0, 0), (1, 1), 2)
+    s_0 = np.random.normal((0, 0), np.sqrt((1, 1)))
 
     s_t_array = np.zeros((T + 1, 2))
     s_t_array[0, :] = s_0

@@ -1,14 +1,13 @@
 from daniel.task_2_helper import *
 
 
-def get_a_t(s_t, s_t_des, V_tplus1, v_tplus1, t) -> np.ndarray:
+def get_a_t(s_t, V_tplus1, v_tplus1, t) -> float:
     assert 0 <= t <= T-1
-    return -np.linalg.inv(H_t + B_t.T.dot(V_tplus1.dot(B_t))).dot(B_t.T.dot(V_tplus1.dot(A_t.dot(s_t) + b_t[:,0]) - v_tplus1))
-    # return get_K_t(V_t_array[t+1], t).dot(s_t_des - s_t) + get_k_t(V_t_array[t+1], v_t_array[t+1], t)
+    return -(H_t + B_t.T.dot(V_tplus1.dot(B_t)))**-1 * (B_t.T.dot(V_tplus1.dot(A_t.dot(s_t) + b_t) - v_tplus1))
 
 
 def execute_LQR() -> (np.ndarray, np.ndarray):
-    s_0 = np.random.normal((0, 0), (1, 1), 2)
+    s_0 = np.random.normal((0, 0), np.sqrt((1, 1)))
 
     s_t_array = np.zeros((T + 1, 2))
     s_t_array[0, :] = s_0
@@ -18,16 +17,14 @@ def execute_LQR() -> (np.ndarray, np.ndarray):
     V_t_array = [None] * (T+1)
     v_t_array = [None] * (T+1)
 
-    s_t_des = np.zeros(2)
-
     for t in np.arange(T, 0, -1):
         V_t_array[t] = get_V_t(V_t_array, t)
         v_t_array[t] = get_v_t(V_t_array, v_t_array, t)
 
-    a_t_array[0] = get_a_t(s_t_array[0, :], s_t_des, V_tplus1=V_t_array[1], v_tplus1=v_t_array[1], t=0)
+    a_t_array[0] = get_a_t(s_t_array[0, :], V_tplus1=V_t_array[1], v_tplus1=v_t_array[1], t=0)
     for t in np.arange(1, T, 1):
         s_t_array[t, :] = get_s_tplus1(s_t_array[t - 1, :], a_t_array[t - 1])
-        a_t_array[t] = get_a_t(s_t_array[t, :], s_t_des, V_tplus1=V_t_array[t+1], v_tplus1=v_t_array[t+1], t=t)
+        a_t_array[t] = get_a_t(s_t_array[t, :], V_tplus1=V_t_array[t+1], v_tplus1=v_t_array[t+1], t=t)
     s_t_array[T, :] = get_s_tplus1(s_t_array[T - 1, :], a_t_array[T - 1])
 
     return s_t_array, a_t_array
@@ -44,26 +41,15 @@ def get_V_t(V_t_array, t):
 def get_v_t(V_t_array, v_t_array, t):
     assert 1 <= t <= T
     if t == T:
-        return get_R_t(t).dot(get_r_t(t))[:,0]
+        return get_R_t(t).dot(get_r_t(t))
     elif 1 <= t <= T-1:
-        return get_R_t(t).dot(get_r_t(t))[:,0] \
-               + (A_t - get_M_t(V_t_array[t+1], t)).T.dot(v_t_array[t+1] - V_t_array[t+1].dot(b_t))[:,0]
+        return get_R_t(t).dot(get_r_t(t)) \
+               + (A_t - get_M_t(V_t_array[t+1], t)).T.dot(v_t_array[t+1] - V_t_array[t+1].dot(b_t))
 
 
 def get_M_t(V_tplus1, t):
     assert 0 <= t <= T-1
-    return B_t.dot(np.linalg.inv(H_t + B_t.T.dot(V_tplus1.dot(B_t))).dot(B_t.T.dot(V_tplus1.dot(A_t))))
-
-
-def get_K_t(V_tplus1, t):
-    assert 0 <= t <= T-1
-    return -np.linalg.inv(H_t + B_t.T.dot(V_tplus1.dot(B_t))).dot(B_t.T.dot(V_tplus1.dot(A_t)))
-
-
-def get_k_t(V_tplus1, v_tplus1, t):
-    assert 0 <= t <= T-1
-    return -np.linalg.inv(H_t + B_t.T.dot(V_tplus1.dot(B_t))).dot(B_t.T.dot(
-        V_tplus1.dot(b_t) - v_tplus1))
+    return B_t.reshape([2,1]).dot((((H_t + B_t.T @ V_tplus1 @ B_t) ** -1) * (B_t.T @ V_tplus1 @ A_t)).reshape([1,2]))
 
 
 def task_2_1c():
