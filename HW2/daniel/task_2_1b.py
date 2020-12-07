@@ -58,6 +58,7 @@ if __name__ == "__main__":
                          ([s_t_var_21a[:,0], s_t_var_21b[:,0]],
                           [s_t_var_21a[:,1], s_t_var_21b[:,1]],
                           [a_t_var_21a, a_t_var_21b])):
-        plotStuff(mean, var, labels[ii], titles[ii])
+        fig = plotStuff(mean, var, labels[ii], titles[ii])
+        fig.savefig("plots/Task2_1b_" + titles[ii] + ".pdf")
         ii += 1
         plt.show()

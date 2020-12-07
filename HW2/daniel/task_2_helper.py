@@ -49,19 +49,24 @@ def get_reward(states: np.ndarray, actions: np.ndarray) -> float:
     return reward
 
 
-def plotStuff(mean_list: list, var_list: list, labels_list: list, title: str):
+def plotStuff(mean_list: list, var_list: list, labels_list: list, title: str) -> plt.figure:
     multiples_std = 1.96
     fig0, ax0 = plt.subplots(1)
     i = 0
     for mean, var in zip(mean_list, var_list):
         ax0.fill_between(np.arange(0, T + 1),
-                         mean[:] + multiples_std * np.sqrt(var[:]) / np.sqrt(n),
-                         mean[:] - multiples_std * np.sqrt(var[:]) / np.sqrt(n), alpha=.5)
+                         mean[:] + multiples_std * np.sqrt(var[:]),
+                         mean[:] - multiples_std * np.sqrt(var[:]), alpha=.5)
         ax0.plot(mean[:], label=labels_list[i])
         i += 1
 
     ax0.set_title(title)
     ax0.set_xlim(0, T)
+    ax0.set_xlabel("Time in s")
+    if title == "Control":
+        ax0.set_ylabel("Control Input")
+    else:
+        ax0.set_ylabel("State")
     ax0.grid()
     ax0.legend()
     plt.tight_layout()

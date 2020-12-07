@@ -61,7 +61,12 @@ print("CONTROLLER 1\nmean = %d \nstandard deviation = %d\n====================" 
 
 mean1 = experiments_1.mean(axis=0)
 std1 = experiments_1.std(axis=0)
-ci = 1.96*std1/np.sqrt(n)  # 95% Konfidenzintervall
+
+mean_a = actions_1.mean(axis=0)
+std_a = actions_1.std(axis=0)
+
+ci = 1.96*std1  # 95% Konfidenzintervall
+ci_a = 1.96*std_a
 
 # first state
 plt.figure()
@@ -76,6 +81,12 @@ plt.title('state 2')
 plt.plot(np.arange(T), mean1[:, 1], color='r')
 plt.fill_between(np.arange(T), mean1[:, 1] + ci[:, 1], mean1[:, 1] - ci[:, 1], alpha=0.5, color='r')
 plt.grid()
+plt.show()
+# actions
+plt.plot(np.arange(T), mean_a, color='r')
+plt.fill_between(np.arange(T), (mean_a + ci_a)[:,0], (mean_a - ci_a)[:,0], alpha=0.5, color='r')
+plt.grid()
+plt.title('action')
 plt.show()
 
 #%%
@@ -110,7 +121,7 @@ for j in range(n):
 
 mean2 = experiments_2.mean(axis=0)
 std2 = experiments_2.std(axis=0)
-ci_2 = 1.96 * std2 / np.sqrt(n)
+ci_2 = 1.96 * std2
 
 mean_r = np.mean(np.sum(rewards, axis=1))
 std_r = np.std(np.sum(rewards, axis=1))
@@ -189,8 +200,8 @@ s_std = states.std(axis=0).reshape(T, 2)
 a_mean = actions.mean(axis=0).flatten()
 a_std = actions.std(axis=0).flatten()
 
-ci_s = 2. * s_std/np.sqrt(n)
-ci_a = 2. * a_std/np.sqrt(n)
+ci_s = 1.96 * s_std
+ci_a = 1.96 * a_std
 
 fig, ax = plt.subplots(3)
 

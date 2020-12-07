@@ -95,7 +95,7 @@ if __name__ == "__main__":
                          ([s_t_var_21a[:,0], s_t_var_21b[:,0], s_t_var_21c[:,0]],
                           [s_t_var_21a[:,1], s_t_var_21b[:,1], s_t_var_21c[:,1]],
                           [a_t_var_21a, a_t_var_21b, a_t_var_21c])):
-        plotStuff(mean, var, labels[ii], titles[ii])
+        fig = plotStuff(mean, var, labels[ii], titles[ii])
+        fig.savefig("daniel/plots/Task2_1c_" + titles[ii] + ".pdf")
         ii += 1
         plt.show()
-

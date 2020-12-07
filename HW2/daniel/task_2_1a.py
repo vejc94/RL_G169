@@ -50,6 +50,7 @@ if __name__ == "__main__":
     ii = 0
     for mean, var in zip(([s_t_mean_21a[:,0]], [s_t_mean_21a[:,1]], [a_t_mean_21a]),
                          ([s_t_var_21a[:,0]], [s_t_var_21a[:,1]], [a_t_var_21a])):
-        plotStuff(mean, var, labels[ii], titles[ii])
+        fig = plotStuff(mean, var, labels[ii], titles[ii])
+        fig.savefig("plots/Task2_1a_" + titles[ii] + ".pdf")
         ii += 1
         plt.show()
