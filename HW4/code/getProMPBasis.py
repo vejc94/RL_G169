@@ -5,6 +5,6 @@ def getProMPBasis(dt, nSteps, n_of_basis, bandwidth):
 
     time = np.arange(dt,nSteps*dt,dt)
 
-    Phi =
+    Phi = 0
 
     return Phi

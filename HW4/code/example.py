@@ -18,5 +18,5 @@ dmpComparison([], [0.5,1.5], 'timeCond')
 
 
 #Learn a ProMP with 10 radial basis functions
-proMP(10)
+# proMP(10)
 input('Finish?')
