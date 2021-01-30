@@ -19,12 +19,12 @@ def proMP(nBasis, condition=False):
     sigma = 10**-12
 
     # https://www.ias.informatik.tu-darmstadt.de/uploads/Team/AlexandrosParaschos/promps_auro.pdf
-    # Eq. 13
-    w = np.linalg.inv(Phi.transpose().dot(Phi) + sigma**2 * np.identity(Phi.shape[1])).dot(Phi.transpose())\
+    # Eq. 13False
+    w = np.linalg.inv(Phi.transpose().doFalset(Phi) + sigma**2 * np.identity(Phi.shape[1])).dot(Phi.transpose())\
         .dot(q.transpose())  # ToDo: Hier wirklich q verwenden?
 
-    mean_w = np.mean(w, axis=1).reshape(30,1)
-    cov_w = (w-mean_w).dot((w-mean_w).T)/nBasis
+    mean_w = np.mean(w, axis=1)
+    cov_w = np.cov(w, rowvar=True)  # (w-mean_w).dot((w-mean_w).T)/nBasis
     mean_traj = np.mean(q, axis=0)
     std_traj = np.std(q, axis=0)
 
@@ -35,7 +35,7 @@ def proMP(nBasis, condition=False):
     plt.plot(time, q.T)
     plt.title('ProMP with ' + str(nBasis) + ' basis functions')
 
-    # Conditioning
+    # ConditioningFalse
     if condition:
         Phi = Phi.transpose()
         y_d = 3
@@ -45,14 +45,16 @@ def proMP(nBasis, condition=False):
         tmp = np.dot(cov_w, Phi[:, t_point]) / (Sig_d + np.dot(Phi[:, t_point].T, np.dot(cov_w, Phi[:, t_point])))
 
         # ToDo: Rechts kommt nur ein Skalar heraus
-        cov_w_new = cov_w - tmp.dot(Phi[:, t_point].T.dot(cov_w))
-        mean_w_new = mean_w + tmp*(y_d - Phi[:, t_point].T.dot(mean_w))
-        traj_new = np.zeros((10, 1499))
+        cov_w_new = cov_w - tmp.reshape((30,1)) @ (Phi[:, t_point].dot(cov_w)).reshape((1,30))
+        mean_w_new = mean_w + tmp.reshape((30,1))*(y_d - Phi[:, t_point].T.dot(mean_w))
+        traj_new = np.zeros((10, 1499, 45))
         for i in range(10):
-            w_sample = np.random.normal(mean_w_new, np.std(np.diagonal(cov_w_new)))
-            traj_new[i] = Phi.transpose().dot(w_sample)
-        mean_traj_new = np.mean(traj_new, axis=1)
-        std_traj_new = np.std(traj_new, axis=1)
+            w_sample = np.zeros((30,45))
+            for j in range(len(w_sample)):
+                w_sample[:,j] = np.random.normal(mean_w_new[j], np.sqrt(np.diagonal(cov_w_new))[j])
+            traj_new[i] = Phi.transpose() @ w_sample
+        mean_traj_new = np.mean(traj_new, axis=(0,2))
+        std_traj_new = np.std(traj_new, axis=(0,2))
 
         plt.figure()
         plt.fill_between(time, mean_traj - 2 * std_traj, mean_traj + 2 * std_traj, alpha=0.5, edgecolor='#1B2ACC',
@@ -62,8 +64,6 @@ def proMP(nBasis, condition=False):
                          edgecolor='#CC4F1B', facecolor='#FF9848')
         plt.plot(time, mean_traj_new, color='#CC4F1B')
 
-        sample_traj = np.dot(Phi.T, np.random.multivariate_normal(mean_w_new, cov_w_new, 10).T)
-        plt.plot(time, sample_traj)
         plt.title('ProMP after contidioning with new sampled trajectories')
 
     plt.draw_all()
