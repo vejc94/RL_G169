@@ -87,6 +87,6 @@ def dmpComparison(goals, taus, filename):
     plt.legend(loc=0)
     plt.figure(f2.number)
     plt.legend(loc=0)
-
+    plt.xlim((0, 3))
     plt.draw_all()
     plt.pause(0.001)

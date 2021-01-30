@@ -15,15 +15,15 @@ def getProMPBasis(dt, nSteps, n_of_basis, bandwidth):
         C[i] = -2 * bandwidth + (Ts + 4 * bandwidth) / nBasis * i
 
     for i in range(nBasis):
-        H[i] = bandwidth ** (1 / 4)
+        H[i] = bandwidth ** 2
 
-    Phi = np.zeros((nSteps, nBasis))
+    Phi = np.zeros((nBasis, nSteps))
 
     for k, time_k in enumerate(time):
         for j in range(nBasis):
-            Phi[k, j] = np.exp(-.5 * (time_k - C[j]) ** 2 / H[j])  # Basis function activation over time
+            Phi[j, k] = np.exp(-.5 * (time_k - C[j]) ** 2 / H[j])  # Basis function activation over time
     for k in range(Phi.shape[0]):
-        Phi[k, :] = (Phi[k, :]) / np.sum(Phi[k, :])  # Normalize basis functions and weight by canonical state
+        Phi[:, k] = (Phi[:, k]) / np.sum(Phi[:, k])  # Normalize basis functions and weight by canonical state
 
     return Phi
 
@@ -37,8 +37,8 @@ if __name__ == '__main__':
     Phi = getProMPBasis(dt, nSteps, nBasis, bandwidth)
 
     fig0, ax0 = plt.subplots(1)
-    for i in range(Phi.shape[1]):
-        ax0.plot(time, Phi[:,i])
+    for i in range(Phi.shape[0]):
+        ax0.plot(time, Phi[i])
         #ax0.plot(time, summPhi[:,i] for i in range(Phi.shape[1])))
 
     plt.show()
