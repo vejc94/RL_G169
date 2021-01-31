@@ -27,10 +27,10 @@ class dmpParams():
 def dmpTrain(q, qd, qdd, dt, nSteps):
     params = dmpParams()
     # Set dynamic system parameters
-    params.alphaz = 3 / (nSteps * dt)  # ToDo: Not sure about this one
+    params.alphaz = 3 / (nSteps * dt - dt)
     params.alpha = 25
     params.beta = 6.25
-    params.Ts = nSteps * dt  # ToDo: Not sure about this one
+    params.Ts = nSteps * dt - dt
     params.tau = 1
     params.nBasis = 50
     params.goal = np.asarray(q[:, -1])  # np.asarray([0.3, -0.8])
@@ -66,7 +66,7 @@ def dmpTrain(q, qd, qdd, dt, nSteps):
     ft = a - b + c
 
     # Learn the weights
-    sigma = 0.1
+    sigma = 10 ** -12
     N, M = Phi.shape
     pseudo_inv = np.linalg.inv(Phi.T @ Phi + sigma ** 2 * np.eye(M, M))
     params.w = pseudo_inv @ Phi.T @ ft.T

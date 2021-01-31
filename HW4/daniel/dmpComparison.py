@@ -85,8 +85,13 @@ def dmpComparison(goals, taus, filename):
 
     plt.figure(f1.number)
     plt.legend(loc=0)
+    plt.grid()
+    plt.xlim((0, 3))
+    plt.savefig(filename + "_1.pdf")
     plt.figure(f2.number)
     plt.legend(loc=0)
+    plt.grid()
     plt.xlim((0, 3))
+    plt.savefig(filename + "_2.pdf")
     plt.draw_all()
     plt.pause(0.001)

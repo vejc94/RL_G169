@@ -25,7 +25,7 @@ def main():
     RMSEVarList = np.zeros(len(nList))
 
     for i, n in enumerate(nList):
-        RMSEList = np.zeros(len(dataTrain[0]))
+        err = np.zeros(len(dataTrain[0]))
         for j, xj in enumerate(dataTrain[0]):
             dataTrain_kFold = dataTrain[:, np.arange(len(dataTrain[0])) != j]
             phi = np.zeros((len(dataTrain_kFold[0]), n))
@@ -38,10 +38,12 @@ def main():
             for k in range(n):
                 phiVal[:, k] = featureFunction(xj, k)
             yPred = phiVal.dot(w_hat)
-            RMSEList[j] = ((yPred - dataTrain[1, j])**2)**.5
+            err[j] = yPred - dataTrain[1, j]
 
-        RMSEMeanList[i] = np.mean(RMSEList)
-        RMSEVarList[i] = np.var(RMSEList)
+        # ToDo: von was die Varianz berechnen?
+        RMSE = np.sum(err**2)**.5
+        RMSEMeanList[i] = RMSE
+        RMSEVarList[i] = 0  # np.var(RMSEList)
 
     fig0, ax0 = plt.subplots()
     ax0.set_title('Mean RMSE of the Training Set using kFold-Cross-Validation')
@@ -53,7 +55,8 @@ def main():
     ax0.set_xlim((1, 9))
     ax0.legend()
     ax1.legend(loc='upper center')
-    plt.savefig('plots/Task_3_1f')
+    plt.show()
+    # plt.savefig('plots/Task_3_1f')
 
 
 if __name__ == '__main__':
