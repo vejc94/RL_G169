@@ -41,4 +41,7 @@ if __name__ == '__main__':
         ax0.plot(time, Phi[ii])
     # ax0.plot(time, sum(Phi[i] for i in range(Phi.shape[0])))
 
+    plt.xlim(-2*bandwidth, 3+2*bandwidth)
+    plt.grid()
+    plt.savefig("ProMP_basis_function.pdf")
     plt.show()
