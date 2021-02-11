@@ -13,7 +13,7 @@ def proMP(nBasis, condition=False):
     qd = data[1]
     qdd = data[2]
 
-    bandwidth = 0.2
+    bandwidth = .2
     Phi = getProMPBasis(dt, nSteps, nBasis, bandwidth)
 
     sigma = 10 ** -12
@@ -54,6 +54,9 @@ def proMP(nBasis, condition=False):
 
         tmp = np.dot(cov_w, Phi[:, t_point]) / (Sig_d + np.dot(Phi[:, t_point].T, np.dot(cov_w, Phi[:, t_point])))
 
+        # Utilized the formulas from Paraschos et al.: Using Probabilistic Movement Primitives in Robotic, p. 11
+        # https://www.ias.informatik.tu-darmstadt.de/uploads/Team/AlexandrosParaschos/promps_auro.pdf
+
         cov_w_new = cov_w - tmp.reshape((30, 1)) @ (Phi[:, t_point].dot(cov_w)).reshape((1, 30))
         mean_w_new = mean_w + tmp * (y_d - Phi[:, t_point].T.dot(mean_w))
         mean_traj_new = Phi.T @ mean_w_new
@@ -67,8 +70,8 @@ def proMP(nBasis, condition=False):
         plt.fill_between(time, mean_traj_new - 2 * std_traj_new, mean_traj_new + 2 * std_traj_new, alpha=0.5,
                          edgecolor='#CC4F1B', facecolor='#FF9848')
         plt.plot(time, sample_traj, alpha=.5)
-        plt.plot(time, mean_traj, color='#1B2ACC', linewidth=2, label='Mean old trajectory')
-        plt.plot(time, mean_traj_new, label='Mean new trajectory', linewidth=2, color='black')
+        plt.plot(time, mean_traj, color='#1B2ACC', linewidth=2, label='Mean old observed trajectory')
+        plt.plot(time, mean_traj_new, label='New imitated trajectory', linewidth=2, color='black')
 
         plt.scatter(t_point * dt, y_d, label="Via point")
 

@@ -30,7 +30,7 @@ def getProMPBasis(dt, nSteps, n_of_basis, bandwidth):
 
 if __name__ == '__main__':
     dt = 0.002
-    nBasis = 30
+    nBasis = 10
     bandwidth = 0.2
     time = np.arange(-2*bandwidth, 3+2*bandwidth, dt)
     nSteps = len(time)
@@ -43,5 +43,5 @@ if __name__ == '__main__':
 
     plt.xlim(-2*bandwidth, 3+2*bandwidth)
     plt.grid()
-    plt.savefig("ProMP_basis_function.pdf")
+    #plt.savefig("ProMP_basis_function.pdf")
     plt.show()
